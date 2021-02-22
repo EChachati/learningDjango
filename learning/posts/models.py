@@ -17,6 +17,8 @@ class User(m.Model):
 
     birthdate = m.DateField(blank=True, null=True)  # blank, permite valores vacios; null, permite valores nulos
 
+    
+
     created = m.DateTimeField(auto_now_add=True)  # Que se agregue automaticamente al momento de crearse la instancia
     modified = m.DateTimeField(auto_now=True)  # Guardar la fecha de la última vez que se editó
 
