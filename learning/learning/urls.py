@@ -15,17 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static # Needed To be able to see images in admin dashboard
+from django.conf import settings
 
 from learning import views as local_views
 from posts import views as posts_views
+from users import views as users_views
 
 urlpatterns = [
-    # path("url", funcion_que_ejecuta)
-    path('hello-world/', local_views.hello_world),
-    path('sorted_numbers/', local_views.sorted_numbers),
-    # Use <str:name> to send a parameter to be used in the url
-    path('hi/<str:name>/<int:age>/', local_views.say_hi),
-    path('posts_plain/', posts_views.list_posts_html_plain),
-    path('posts/', posts_views.list_posts),
-    path('admin/', admin.site.urls)
-]
+    path('admin/', admin.site.urls, name='admin'),
+    path('feed/', posts_views.list_posts, name='feed'),
+    path('users/login/', users_views.login_view, name='login'),
+    path('users/logout/', users_views.logout_view, name='logout'),
+    path('users/singup/', users_views.singup_view, name='singup'),
+    path('users/me/profile/', users_views.update_profile, name='update_profile')
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # Toma la ruta del archivo multimedia y hace que no lo tome como una ruta de url sino para llegar y abrir el archivo

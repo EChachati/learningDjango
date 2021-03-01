@@ -1,26 +1,22 @@
-"""Posts models"""
-from django.db import models as m
 
+"""[Post models Django]"""
 
-# Create your models here.
-class User(m.Model):
-    """User Model"""
-    email = m.EmailField(unique=True)  # unique = True, el valor no puede repetirse
-    password = m.CharField(max_length=100)
+from django.db import models as m 
+from django.contrib.auth.models import User
+from users.models import Profile
 
-    first_name = m.CharField(max_length=25)
-    last_name = m.CharField(max_length=25)
+class Post(m.Model):
+    """ Posts Models 
+    Must be enlaced with Users
+    """
+    user = m.ForeignKey(User, on_delete=m.CASCADE)
+    profile = m.ForeignKey(Profile, on_delete=m.CASCADE)
 
-    is_admin = m.BooleanField(default=False)  # Valor por defecto
+    title = m.CharField(max_length=255)
+    photo = m.ImageField(upload_to='posts/photos')
 
-    bio = m.TextField(blank=True)  # Que pueda  estar vacia
-
-    birthdate = m.DateField(blank=True, null=True)  # blank, permite valores vacios; null, permite valores nulos
-
-    
-
-    created = m.DateTimeField(auto_now_add=True)  # Que se agregue automaticamente al momento de crearse la instancia
-    modified = m.DateTimeField(auto_now=True)  # Guardar la fecha de la última vez que se editó
+    created = m.DateTimeField(auto_now_add=True)
+    modified = m.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.email
+        return f' {title} by @{user.username}'

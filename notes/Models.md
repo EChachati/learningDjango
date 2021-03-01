@@ -155,3 +155,47 @@ Actualizar Datos de objetos en la Base de Datos
 ```shell
 >>> platzi_users = User.objects.filter(email__endswith = '@platzi.com').update(is_admin = True)
 ```
+Crear un SuperUsuario
+```
+python3 manage.py createsuperuser
+```
+Puedes usar los modelos que te traen las aplicaciones por defecto de Django
+```shell
+>>> from django.contrib.auth.models import User
+>>> u = User.objects.create_user(username='edkar', password='admin123')
+>>> u
+<User: edkar>
+>>> u.pk
+1
+>>> u.password
+'pbkdf2_sha256$216000$SfT6wPZZPMKS$CX3ATQmFAgi1OsNANsWaYXnk5d4gDgkB7y1NlPL54iU='
+>>>    
+```
+Como puedes ver, la contraseña se guarda encriptada, pero al momento de revisar la DB tienden a faltar muchos campos útiles y necesarios, asi que se para añadirlos se debe implementar usuarios personalizados
+## Implementación de Usuarios personalizados
+- ### Usando el Modelo Proxy
+```python
+from django.contrib.auth.models import User
+from django.db import models as m
+
+
+# Create your models here.
+class Profile(m.Model):
+    """Proxy model uses Abstract class User and added needed info"""
+    # Crea un objeto en la clase User y con ese ID creamos otra tabla con los new fields si se elimina realiza efecto de SQL cascade
+    user = m.OneToOneField(User, on_delete=m.CASCADE)  
+
+    # new fields
+    website = m.URLField(max_length=250, blank=True)
+    biography = m.TextField(blank=True)
+    phone_number = m.CharField(max_length=20, blank=True)
+    profile_picture = m.ImageField(
+        upload_to="users/pictures",
+        blank=True, 
+        null=True
+    )
+    created = m.DateTimeField(auto_now_add=True)
+    modified = m.DateTimeField(auto_now=True)
+```
+- ### Extendiendo de la clase Abstracta de User existente
+    ```CHECK DOCUMENTATION```

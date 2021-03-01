@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render  # Toma un request
-
+from django.contrib.auth.decorators import login_required
 posts = [
     {
         'title': "Peter Chiguire",
@@ -18,16 +18,16 @@ posts = [
     {
         'title': "Chiguires in love",
         'user': {'name': "@PeterChigInLove",
-                 'picture': "https://64.media.tumblr.com/avatar_e3311873a30d_128.pnj"
-                 },
+                'picture': "https://64.media.tumblr.com/avatar_e3311873a30d_128.pnj"
+                },
         'timestamp': datetime.now().strftime("%a %d/%m/%Y - %H:%M"),
         'photo': "https://www.venezuelatuya.com/natura/imagenes/047chiguire2.jpg"
     },
     {
         'title': "Fachero el Chiguire",
         'user': {'name': "@FachaChig",
-                 'picture': "https://ih1.redbubble.net/image.870527524.5159/flat,128x128,075,t-pad,128x128,f8f8f8.jpg"
-                 },
+                'picture': "https://ih1.redbubble.net/image.870527524.5159/flat,128x128,075,t-pad,128x128,f8f8f8.jpg"
+                },
         'photo': "https://agenciameme.com/wp-content/uploads/2020/05/capibaras-758x506.jpg",
         'timestamp': datetime.now().strftime("%a %d/%m/%Y - %H:%M")
 
@@ -36,6 +36,7 @@ posts = [
 
 
 # Create your views here.
+
 def list_posts_html_plain(request):
     """List of existing posts"""
     content = []
@@ -48,7 +49,7 @@ def list_posts_html_plain(request):
         """)
     return HttpResponse('<br>'.join(content))  # Inyectamos el Html hecho separado por el <br>
 
-
+@login_required
 def list_posts(request):
     # retorna el request, un template y un contexto, que es un diccionario
-    return render(request, 'feed.html', {'posts': posts})
+    return render(request, 'posts/feed.html', {'posts': posts})
