@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from users.models import Profile
 
+# Forms
+from users.forms import UpdateUser
+
 # Create your views here.
 def login_view(request):
     if request.method == 'POST':
@@ -17,7 +20,7 @@ def login_view(request):
             username=username,
             password=password
             )
-        
+
         if user is not None:
             login(request, user)
             # Redirect to a Success page
@@ -50,7 +53,7 @@ def singup_view(request):
         # Validate Username is not already taken
         if User.objects.filter(username=username):
             return render(request, 'users/singup.html', context={'error': 'Username is already taken'})
-        
+
         # Creates User with data from POST
         u = User.objects.create_user(
             username=username,
@@ -69,4 +72,29 @@ def singup_view(request):
 
 
 def update_profile(request):
-    return render(request, 'users/update/profile.html')
+    profile = request.user.profile
+    if request.method == 'POST':
+        print(request.POST)
+        form = UpdateUser(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+
+            profile.website = data['website']
+            profile.biography = data['biography']
+            profile.phone_number = data['phone_number']
+            profile.profile_picture = data['picture']
+
+            profile.save()
+            
+            return redirect('update_profile')
+    else:
+        form = UpdateUser()
+    return render(
+        request,
+        'users/update/profile.html',
+        context={
+            'profile': profile,
+            'user': request.user,
+            'form': form
+        }
+        )
