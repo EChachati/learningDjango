@@ -14,7 +14,7 @@ class Profile(m.Model):
     phone_number = m.CharField(max_length=20, blank=True)
     profile_picture = m.ImageField(
         upload_to="users/pictures",
-        blank=True, 
+        blank=True,
         null=True
     )
     created = m.DateTimeField(auto_now_add=True)

@@ -1,9 +1,10 @@
-
 """[Post models Django]"""
 
-from django.db import models as m 
+from django.db import models as m
 from django.contrib.auth.models import User
+
 from users.models import Profile
+
 
 class Post(m.Model):
     """ Posts Models 
@@ -19,4 +20,4 @@ class Post(m.Model):
     modified = m.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f' {title} by @{user.username}'
+        return f' {self.title} by @{self.user.username}'
