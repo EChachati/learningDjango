@@ -28,6 +28,7 @@ urlpatterns = [
     path('users/login/', users_views.login_view, name='login'),
     path('users/logout/', users_views.logout_view, name='logout'),
     path('users/singup/', users_views.singup_view, name='singup'),
-    path('users/me/profile/', users_views.update_profile, name='update_profile')
+    path('users/me/profile/', users_views.update_profile, name='update_profile'),
+    path('feed/new/', posts_views.create_post, name='newpost')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     # Toma la ruta del archivo multimedia y hace que no lo tome como una ruta de url sino para llegar y abrir el archivo

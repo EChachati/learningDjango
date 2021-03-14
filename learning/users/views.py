@@ -70,11 +70,10 @@ def singup_view(request):
         return redirect('feed')
     return render(request, 'users/singup.html')
 
-
+@login_required
 def update_profile(request):
     profile = request.user.profile
     if request.method == 'POST':
-        print(request.POST)
         form = UpdateUser(request.POST, request.FILES)
         if form.is_valid():
             data = form.cleaned_data
@@ -82,8 +81,9 @@ def update_profile(request):
             profile.website = data['website']
             profile.biography = data['biography']
             profile.phone_number = data['phone_number']
-            profile.profile_picture = data['picture']
-
+            if data['picture']:
+                profile.profile_picture = data['picture']
+            
             profile.save()
             
             return redirect('update_profile')

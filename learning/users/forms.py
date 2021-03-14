@@ -9,4 +9,4 @@ class UpdateUser(forms.Form):
 
     phone_number = forms.CharField(max_length=20, required=True)
 
-    picture = forms.ImageField()
+    picture = forms.ImageField(required=False)
