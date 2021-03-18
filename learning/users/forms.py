@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from users.models import Profile
 
 
+"""
+DEPRECATED
+
 class UpdateUser(forms.Form):
     website = forms.URLField(max_length=200, required=True)
 
@@ -14,7 +17,9 @@ class UpdateUser(forms.Form):
     phone_number = forms.CharField(max_length=20, required=True)
 
     picture = forms.ImageField(required=False)
-
+    
+DEPRECATED
+"""
 
 class SingupForm(forms.Form):
     username = forms.CharField(max_length=20, required=True)

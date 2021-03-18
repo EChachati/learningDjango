@@ -12,7 +12,7 @@
         <p class="alert alert-danger">{{ error }}</p>
     {% endif %}
         
-    <form action="{% url 'singup' %}" method="post">
+    <form action="{% url 'users:singup' %}" method="post">
         {% csrf_token %}
         
         <div class="form-group">

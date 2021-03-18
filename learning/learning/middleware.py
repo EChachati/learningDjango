@@ -20,14 +20,16 @@ class ProfileCompletionMiddleware:
 
         if not request.user.is_anonymous:
             if not request.user.is_staff:
-                if request.path not in [reverse('update_profile'),
-                                        reverse('logout')]:  # If i'm not already in that link
+                if request.path not in [reverse('users:update_profile'),
+                                        reverse('users:logout')]:  # If i'm not already in that link
                     # calling a OneToOneField
                     profile = request.user.profile
                     if not profile.profile_picture or not profile.biography:
-                        return redirect('update_profile')
+                        return redirect('users:update_profile')
         else:
-            if request.path not in ['admin/', reverse('login'), reverse('singup')]:  # If i'm not already in that link
-                return redirect('login')
+            if request.path not in ['admin/', reverse('users:login'), reverse('users:singup')]:  # If i'm not already
+                # in that
+                # link
+                return redirect('users:login')
         response = self.get_response(request)
         return response

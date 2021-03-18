@@ -1,57 +1,28 @@
 # Django
-from datetime import datetime
 
-from django.http import HttpResponse
-from django.shortcuts import render, redirect  # Toma un request
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView
 
 from posts.forms import PostForm
 
 from posts.models import Post
 
-posts = [
-    {
-        'title': "Peter Chiguire",
-        'user': {
-            'name': "@PeterChig",
-            'picture': "https://ih1.redbubble.net/image.917912217.1975/flat,128x128,075,t-pad,128x128,f8f8f8.jpg"
-        },
-        'timestamp': datetime.now().strftime("%a %d/%m/%Y - %H:%M"),
-        'photo': "https://www.venezuelatuya.com/natura/imagenes/047chiguire3.jpg"
-
-    },
-    {
-        'title': "Chiguires in love",
-        'user': {'name': "@PeterChigInLove",
-                 'picture': "https://64.media.tumblr.com/avatar_e3311873a30d_128.pnj"
-                 },
-        'timestamp': datetime.now().strftime("%a %d/%m/%Y - %H:%M"),
-        'photo': "https://www.venezuelatuya.com/natura/imagenes/047chiguire2.jpg"
-    },
-    {
-        'title': "Fachero el Chiguire",
-        'user': {'name': "@FachaChig",
-                 'picture': "https://ih1.redbubble.net/image.870527524.5159/flat,128x128,075,t-pad,128x128,f8f8f8.jpg"
-                 },
-        'photo': "https://agenciameme.com/wp-content/uploads/2020/05/capibaras-758x506.jpg",
-        'timestamp': datetime.now().strftime("%a %d/%m/%Y - %H:%M")
-
-    }
-]
-
 
 # Create your views here.
+"""
+ DEPRECATED VIEWS 
 
 def list_posts_html_plain(request):
-    """List of existing posts"""
+    # List of existing posts 
     content = []
     for post in posts:
         # por cada post en el diccionario generamos un html
-        content.append(f"""
+        content.append(f'''
             <p><strong>{post['name']}</strong></p>
             <p><small>{post['user']} - <i>{post['timestamp']}</i></small></p>
             <figure><img src="{post['picture']}"/></figure>
-        """)
+        ''')
     return HttpResponse('<br>'.join(content))  # Inyectamos el Html hecho separado por el <br>
 
 
@@ -63,6 +34,7 @@ def list_posts(request):
     return render(request, 'posts/feed.html', {'posts': posts})
 
 
+
 @login_required
 def create_post(request):
     if request.method == 'POST':
@@ -70,7 +42,7 @@ def create_post(request):
         if form.is_valid():
             print(form)
             form.save()
-            return redirect("feed")
+            return redirect("posts:feed")
     else:
         form = PostForm()
 
@@ -83,3 +55,32 @@ def create_post(request):
             'profile': request.user.profile
         }
     )
+
+DEPRECATED
+"""
+
+
+class PostsFeedView(LoginRequiredMixin, ListView):
+    template_name = 'posts/feed.html'
+    model = Post
+    ordering = ('-created',)
+    paginate_by = 30
+    context_object_name = 'posts'
+
+class PostDetailView(LoginRequiredMixin, DetailView):
+    template_name = "posts/detail.html"
+    queryset = Post.objects.all()
+    context_object_name = 'post'
+
+class CreatePostView(LoginRequiredMixin, CreateView):
+    # Create a New Post
+    template_name = "posts/new.html"
+    form_class = PostForm
+    success_url = reverse_lazy('posts:feed')
+
+    def get_context_data(self, **kwargs):
+        # Add User and profile to context #
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['profile'] = self.request.user.profile
+        return context
