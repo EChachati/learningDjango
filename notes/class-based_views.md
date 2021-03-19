@@ -112,7 +112,21 @@ class UserDetailView(DetailView, LoginRequiredMixin):
         context['posts'] = Post.objects.filter(user=user).order_by('-created')
         return context
 ```
+```python
+#Using Create View
+class CreatePostView(LoginRequiredMixin, CreateView):
+    # Create a New Post
+    template_name = "posts/new.html"
+    form_class = PostForm
+    success_url = reverse_lazy('posts:feed')
 
+    def get_context_data(self, **kwargs):
+        # Add User and profile to context #
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['profile'] = self.request.user.profile
+        return context
+```
 ```python
 # Using FormView
 class SingupView(FormView):
@@ -144,4 +158,41 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
         # Return to Users Profile
         username = self.object.user.username
         return reverse('users:detail', kwargs= {'username': username})
+```
+```python
+# Using List View
+class PostsFeedView(LoginRequiredMixin, ListView):
+    template_name = 'posts/feed.html'
+    model = Post
+    ordering = ('-created',)
+    paginate_by = 30
+    context_object_name = 'posts'
+```
+
+## Login y Logout views
+Son de las mas sencillas solo tienes que heredar de ellas y añadirle el redirect link en el archivo settings y el 
+template
+
+```python
+# users/views.py
+
+from django.contrib.auth import views as auth_views
+
+class LoginView(auth_views.LoginView):
+    # Login View
+    template_name = 'users/login.html'
+    
+    # Esto es para que si un user ya esta autenticado lo redirige a posts
+    redirect_authenticated_user = True
+
+class LogoutView(auth_views.LogoutView):
+    # Log out View
+    pass
+```
+```python
+# Settings.py
+
+LOGIN_URL = "/users/login/"
+LOGIN_REDIRECT_URL = "/posts/"
+LOGOUT_REDIRECT_URL = LOGIN_URL
 ```
